@@ -1,0 +1,2 @@
+class RegexMatchError(Exception):
+    pass

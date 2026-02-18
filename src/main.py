@@ -5,6 +5,7 @@ import read_in_data
 DATA_PATH: str = "test-data/train"
 
 
+@type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
 def main() -> None:
     eye_tracker_events = read_in_data.read_in_source_data(
         Path(f"{DATA_PATH}/source/{sys.argv[1]}")
