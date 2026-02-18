@@ -76,12 +76,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "huggingface" },
+    { name = "type-enforced" },
     { name = "wandb" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "huggingface", specifier = ">=0.0.1" },
+    { name = "type-enforced", specifier = ">=2.3.0" },
     { name = "wandb", specifier = ">=0.25.0" },
 ]
 
@@ -275,6 +277,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/44/cd/a040c4b3119bbe532e5b0732286f805445375489fceaec1f48306068ee3b/smmap-5.0.2.tar.gz", hash = "sha256:26ea65a03958fa0c8a1c7e8c7a58fdc77221b8910f6be2131affade476898ad5", size = 22329, upload-time = "2025-01-02T07:14:40.909Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/be/d09147ad1ec7934636ad912901c5fd7667e1c858e19d355237db0d0cd5e4/smmap-5.0.2-py3-none-any.whl", hash = "sha256:b30115f0def7d7531d22a0fb6502488d879e75b260a9db4d0819cfb25403af5e", size = 24303, upload-time = "2025-01-02T07:14:38.724Z" },
+]
+
+[[package]]
+name = "type-enforced"
+version = "2.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c9/cd/39228f1927fbafe21018244582368667521ee4662892c6b48aa89d6c9afc/type_enforced-2.3.0.tar.gz", hash = "sha256:de75ab9198b869c003d02f331f7ff40ee816760760420e9d80e054e0b3bc360c", size = 32286, upload-time = "2025-11-04T16:29:19.377Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/08/cb/ff0f60eb34283fb233fd3556331a81efdfbd8a9bdcb5601e1e10a8c6ffd8/type_enforced-2.3.0-py3-none-any.whl", hash = "sha256:c804771d5645f916517c7e4b3424651a34b5b4dc3683d804f947e9b7bc3f7f2c", size = 22149, upload-time = "2025-11-04T16:29:13.888Z" },
 ]
 
 [[package]]
