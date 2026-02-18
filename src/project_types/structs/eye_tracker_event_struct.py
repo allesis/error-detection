@@ -4,6 +4,10 @@ from project_types.enums.eye_tracker_validity_enum import (
     EyeTrackerValidityEnum as ValidityEnum,
 )
 
+# Some of the fields do not share have the same name in the csv file
+# Here we define the mapping between the two
+# Left hand side should be name as it appears in class def
+# Right hand side should be name as it appears in first row of csv file
 EVENT_FIELD_TO_NAME_MAPPING = {
     "Recording": "Recording",
     "Participant": "Participant",
@@ -85,11 +89,11 @@ class EyeTrackerEvent:
         Dict should contain an entry for each element of the struct,
         even if the entry is empty.
         Checks to ensure the dict represents a valid entry.
-        Returns None if the dict is not valid.
+        Returns `None` if the dict is not valid.
         """
 
         # Ensure dict is correct length
-        if d.__len__() != 31:
+        if len(d) != len(cls.__dataclass_fields__):
             return None
 
         # Ensure dict has all the correct fields
@@ -98,12 +102,14 @@ class EyeTrackerEvent:
                 d[EVENT_FIELD_TO_NAME_MAPPING[field]]
             except KeyError:
                 print(
-                    f"The key #{EVENT_FIELD_TO_NAME_MAPPING[field]} was not found in the provided dict:\n#{dict}"
+                    f"The key {EVENT_FIELD_TO_NAME_MAPPING[field]} was not found in the provided dict:\n\t{dict}"
                 )
                 return None
             except Exception as e:
                 # Out of the ordinary error
-                print(f"Error #{e}")
+                print(
+                    f"Error with parsing EyeTrackerEvent from dict:\n\t{d}\nError:\n\t{e}"
+                )
                 return None
 
         new_dict = dict(zip(cls.__dataclass_fields__, d.items()))
