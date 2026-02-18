@@ -27,28 +27,26 @@ class HumanErrorEvent:
         Dict should contain an entry for each element of the struct,
         even if the entry is empty.
         Checks to ensure the dict represents a valid entry.
-        Returns `None` if the dict is not valid.
         If a fix time is not a valid int it will be replaced with `None`.
+        Raises an error if the dict is not able to be parsed to the struct.
         """
         if len(d) != len(cls.__dataclass_fields__):
-            print(
+            raise KeyError(
                 f"HumanErrorEvent Dict param is of length {len(d)} expected length {len(cls.__dataclass_fields__)}"
             )
-            return None
 
         for field in cls.__dataclass_fields__:
             try:
                 d[EVENT_FIELD_TO_NAME_MAPPING[field]]
             except KeyError:
-                print(
-                    f"The key {EVENT_FIELD_TO_NAME_MAPPING[field]} was not found in the provided dict:\n\t{dict}"
+                raise KeyError(
+                    f"The key {EVENT_FIELD_TO_NAME_MAPPING[field]} was not found in the provided dict:\n\t{dict}\nError:\n\t{e}"
                 )
             except Exception as e:
                 # Out of the ordinary error
-                print(
-                    f"Error with parsing HumanErrorEvent from dict:\n\t{d}\nError:\n\t{e}"
+                raise type(e)(
+                    f"Error with parsing EyeTrackerEvent from dict:\n\t{d}\nError:\n\t{e}"
                 )
-                return None
 
         new_dict = dict(zip(cls.__dataclass_fields__, d.items()))
 
