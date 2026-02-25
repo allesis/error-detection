@@ -1,4 +1,5 @@
 import re
+import type_enforced
 from project_types.errors.regex_match_error import RegexMatchError
 
 TIME_REGEX_PATTERN: str = "^\\d\\d:\\d\\d:\\d\\d$"
@@ -18,5 +19,11 @@ def time_to_duration(time_str: str) -> int:
             f"Provided time string:\n\t{time_str}\nIs not a valid time string"
         )
 
-    print(time_str)
+    hours = int(time_str[0:2])
+    minutes = int(time_str[3:5])
+    seconds = int(time_str[6:8])
+
+    print(hours)
+    print(minutes)
+    print(seconds)
     return 0

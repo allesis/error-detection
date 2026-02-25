@@ -1,3 +1,4 @@
+import type_enforced
 from dataclasses import dataclass
 from project_types.enums.eye_tracker_event_enum import EyeTrackerEventEnum as EventEnum
 from project_types.enums.eye_tracker_validity_enum import (
@@ -49,6 +50,7 @@ EVENT_FIELD_TO_NAME_MAPPING = {
 # If this can't be done programatically, we can probably
 # do it by hard coding the values in a enum and using that
 # This would be a less ideal, but still less fragile approach
+@type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
 @dataclass(frozen=True, kw_only=True)
 class EyeTrackerEvent:
     Recording: str
@@ -84,13 +86,51 @@ class EyeTrackerEvent:
     GlanceNextAOI: str
 
     @classmethod
-    def from_dict(cls, d: dict) -> Self:
+    def from_dict(cls, d: dict) -> EyeTrackerEvent:
         """Construct a EyeTrackerEvent from a dict.
         Dict should contain an entry for each element of the struct,
         even if the entry is empty.
         Checks to ensure the dict represents a valid entry.
         Raises an error if the dict is not able to be parsed to the struct.
         """
+
+        def convert_dict_typing(d: dict) -> dict:
+            # NOTE: Python will never deep copy so this is just a pointer reference
+            type_corrected_dict: dict = d
+            
+            int_typed_vals = [
+                "Interval",
+                "EventIndex",
+                "Start",
+                "Stop",
+                "Duration",
+                "HitProportion",
+            ]
+
+            float_typed_vals = [
+                "FixationPointX",
+                "FixationPointY",
+                "AveragePupilDiameter",
+                "SaccadeDirection",
+                "AverageVelocity",
+                "PeakVelocity",
+                "SaccadeAmplitude",
+                "StartPositionX",
+                "StartPositionY",
+                "LandingPositionX",
+                "LandingPositionY",
+            ]
+
+            for val in int_typed_vals:
+                type_corrected_dict.update({val: int(d.pop(val))})
+
+            for val in float_typed_vals:
+                try:
+                    type_corrected_dict.update({val: float(d.pop(val))})
+                except:
+                    type_corrected_dict.update({val: None})
+
+            return type_corrected_dict
 
         # Ensure dict is correct length
         if len(d) != len(cls.__dataclass_fields__):
@@ -112,6 +152,9 @@ class EyeTrackerEvent:
                     f"Error with parsing EyeTrackerEvent from dict:\n\t{d}\nError:\n\t{e}"
                 )
 
-        new_dict = dict(zip(cls.__dataclass_fields__, d.items()))
+        new_dict = dict(zip(cls.__dataclass_fields__, map(lambda x: x[1], d.items())))
+        
+        convert_dict_typing(new_dict)
 
+        print(new_dict)
         return cls(**new_dict)

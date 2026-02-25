@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 import type_enforced
+from dataclasses import dataclass
+from util import time_to_duration
 
 # Some of the fields do not share have the same name in the csv file
 # Here we define the mapping between the two
@@ -51,6 +52,19 @@ class HumanErrorEvent:
 
             error_number: int = int(d.pop(EVENT_FIELD_TO_NAME_MAPPING["ErrorNumber"]))
             type_corrected_dict.update({"ErrorNumber": error_number})
+
+            try:
+                type_corrected_dict.update({"StartTime": time_to_duration(d.pop("StartTime"))})
+                type_corrected_dict.update({"EndTime": time_to_duration(d.pop("EndTime"))})
+            except RegexMatchError: 
+                print("Failed to read in target data\nPlease ensure it is correctly formatted")
+
+            try:
+                type_corrected_dict.update({"Fix": time_to_duration(d.pop("Fix"))})
+                type_corrected_dict.update({"ErrorIsFixed": True})
+            except RegexMatchError:
+                type_corrected_dict.update({"ErrorIsFixed": False})
+
 
         class_fields: [str] = cls.__dataclass_fields__
         class_fields.pop("ErrorIsFixed")

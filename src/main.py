@@ -1,8 +1,9 @@
 import sys
-from pathlib import Path
+import type_enforced
 import read_in_data
+from pathlib import Path
 
-DATA_PATH: str = "test-data/train"
+DATA_PATH: str = "data/train"
 
 
 @type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
