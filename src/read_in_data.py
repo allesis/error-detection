@@ -1,4 +1,5 @@
 import csv
+import type_enforced
 from pathlib import Path
 from os.path import splitext
 from project_types.errors.file_type_error import FileTypeError
@@ -6,7 +7,8 @@ from project_types.structs.eye_tracker_event_struct import EyeTrackerEvent
 from project_types.structs.human_error_event_struct import HumanErrorEvent
 
 
-def read_in_source_data(file_path: Path) -> [EyeTrackingEvent]:
+@type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
+def read_in_source_data(file_path: Path) -> list[EyeTrackerEvent]:
     """Reads in the csv file located at file_path
     and returns an array of `EyeTrackerEvent`s parsed from the file
     """
@@ -21,7 +23,7 @@ def read_in_source_data(file_path: Path) -> [EyeTrackingEvent]:
             f"Provide file with path:\n\t{file_path}\nDoes not have correct file extension of '.csv'\n\tFound `{file_ext}`"
         )
 
-    eye_tracker_events: [EyeTrackerEvent] = []
+    eye_tracker_events: list[EyeTrackerEvent] = []
     with open(file_path, mode="r") as file:
         csvFile: csv.DictReader = csv.DictReader(file)
         for line_dict in csvFile:
@@ -31,7 +33,8 @@ def read_in_source_data(file_path: Path) -> [EyeTrackingEvent]:
     return eye_tracker_events
 
 
-def read_in_target_data(file_path: Path) -> [HumanErrorEvent]:
+@type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
+def read_in_target_data(file_path: Path) -> list[HumanErrorEvent]:
     """Reads in the csv file located at file_path
     and returns an array of `HumanErrorEvent`s parsed from the file
     """
@@ -46,7 +49,7 @@ def read_in_target_data(file_path: Path) -> [HumanErrorEvent]:
             f"Provide file with path:\n\t{file_path}\nDoes not have correct file extension of '.csv'\n\tFound `{file_ext}`"
         )
 
-    human_error_events: [HumanErrorEvent] = []
+    human_error_events: list[HumanErrorEvent] = []
 
     with open(file_path, mode="r") as file:
         csvFile: csv.DictReader = csv.DictReader(file)
