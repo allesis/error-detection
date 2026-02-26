@@ -1,10 +1,13 @@
 import re
-import type_enforced
 from project_types.errors.regex_match_error import RegexMatchError
+import type_enforced
 
 
 @type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
 def time_to_duration(time_str: str) -> int:
+    """Takes a string of the form `HH:MM:SS???...???`, where `D` is a digit and ???...??? is anything
+    and returns the duration the string represents in seconds.
+    """
     _TIME_REGEX_PATTERN: str = "^(\\d?\\d):(\\d\\d):(\\d\\d).*"
     _TIME_REGEX: re.Pattern[anystr] = re.compile(_TIME_REGEX_PATTERN)
     regex_match = _TIME_REGEX.match(time_str)
