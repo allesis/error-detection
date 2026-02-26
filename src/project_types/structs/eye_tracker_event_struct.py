@@ -85,6 +85,29 @@ class EyeTrackerEvent:
     GlancePreviousAOI: str
     GlanceNextAOI: str
 
+    def to_list(self) -> list[float]:
+        return list(
+            [
+                float(self.Interval),
+                float(self.EventIndex),
+                float(self.Start),
+                float(self.Stop),
+                float(self.Duration),
+                float(self.HitProportion),
+                float(self.FixationPointX),
+                float(self.FixationPointY),
+                float(self.AveragePupilDiameter),
+                float(self.SaccadeDirection),
+                float(self.AverageVelocity),
+                float(self.PeakVelocity),
+                float(self.SaccadeAmplitude),
+                float(self.StartPositionX),
+                float(self.StartPositionY),
+                float(self.LandingPositionX),
+                float(self.LandingPositionY),
+            ]
+        )
+
     @classmethod
     def from_dict(cls, d: dict) -> EyeTrackerEvent:
         """Construct a EyeTrackerEvent from a dict.
