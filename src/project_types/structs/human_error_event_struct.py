@@ -1,6 +1,7 @@
 import type_enforced
 from dataclasses import dataclass
-from util import time_to_duration
+from project_types.errors.regex_match_error import RegexMatchError
+from util.time_to_duration import time_to_duration
 
 # Some of the fields do not share have the same name in the csv file
 # Here we define the mapping between the two
@@ -47,26 +48,30 @@ class HumanErrorEvent:
                 ErrorIsFixed: gone -> bool (Should not be present in original dict; if True if Fix is mapped successfully, False otherwise)
             """
 
-            type_corrected_dict: dict = {}
+            type_corrected_dict: dict = d
             type_corrected_dict.update({"Description": d.pop("Description")})
 
-            error_number: int = int(d.pop(EVENT_FIELD_TO_NAME_MAPPING["ErrorNumber"]))
-            type_corrected_dict.update({"ErrorNumber": error_number})
+            type_corrected_dict.update({"ErrorNumber": int(d.pop("ErrorNumber"))})
 
             try:
-                type_corrected_dict.update({"StartTime": time_to_duration(d.pop("StartTime"))})
-                type_corrected_dict.update({"EndTime": time_to_duration(d.pop("EndTime"))})
-            except RegexMatchError: 
-                print("Failed to read in target data\nPlease ensure it is correctly formatted")
+                type_corrected_dict.update(
+                    {"StartTime": time_to_duration(d.pop("StartTime"))}
+                )
+                type_corrected_dict.update(
+                    {"EndTime": time_to_duration(d.pop("EndTime"))}
+                )
+            except RegexMatchError as e:
+                raise RuntimeError(f"Failed to read in target data\n{e}")
 
-            try:
-                type_corrected_dict.update({"Fix": time_to_duration(d.pop("Fix"))})
-                type_corrected_dict.update({"ErrorIsFixed": True})
-            except RegexMatchError:
-                type_corrected_dict.update({"ErrorIsFixed": False})
+            fix_time = d.pop("Fix")
+            if fix_time == "DNF":
+                type_corrected_dict.update({"Fix": -1})
+                type_corrected_dict["ErrorIsFixed"] = False
+            else:
+                type_corrected_dict.update({"Fix": time_to_duration(fix_time)})
+                type_corrected_dict["ErrorIsFixed"] = True
 
-
-        class_fields: [str] = cls.__dataclass_fields__
+        class_fields: dict[str] = cls.__dataclass_fields__.copy()
         class_fields.pop("ErrorIsFixed")
 
         if len(d) != len(class_fields):
@@ -87,9 +92,13 @@ class HumanErrorEvent:
                     f"Error with parsing EyeTrackerEvent from dict:\n\t{d}\nError:\n\t{e}"
                 )
 
-        name_corrected_dict: dict = dict(zip(class_fields, d.items()))
+        name_corrected_dict: dict = dict(
+            zip(class_fields, map(lambda x: x[1], d.items()))
+        )
 
-        type_corrected_dict: dict = convert_dict_typing(name_corrected_dict)
+        type_corrected_dict: dict = name_corrected_dict
+
+        convert_dict_typing(type_corrected_dict)
 
         # `new_dict` is now a valid dict to parse to
         return cls(**type_corrected_dict)
