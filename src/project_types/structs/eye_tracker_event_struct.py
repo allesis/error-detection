@@ -97,7 +97,7 @@ class EyeTrackerEvent:
         def convert_dict_typing(d: dict) -> dict:
             # NOTE: Python will never deep copy so this is just a pointer reference
             type_corrected_dict: dict = d
-            
+
             int_typed_vals = [
                 "Interval",
                 "EventIndex",
@@ -122,13 +122,24 @@ class EyeTrackerEvent:
             ]
 
             for val in int_typed_vals:
-                type_corrected_dict.update({val: int(d.pop(val))})
+                try:
+                    type_corrected_dict.update({val: int(d.pop(val))})
+                except:
+                    type_corrected_dict.update({val: int(-1)})
 
             for val in float_typed_vals:
                 try:
                     type_corrected_dict.update({val: float(d.pop(val))})
                 except:
-                    type_corrected_dict.update({val: None})
+                    type_corrected_dict.update({val: float("nan")})
+
+            custom_type_vals: [(str, anyclass)] = [
+                ("EventType", EventEnum),
+                ("Validity", ValidityEnum),
+            ]
+
+            for val, val_type in custom_type_vals:
+                type_corrected_dict.update({val: val_type(d.pop(val).lower())})
 
             return type_corrected_dict
 
@@ -153,8 +164,7 @@ class EyeTrackerEvent:
                 )
 
         new_dict = dict(zip(cls.__dataclass_fields__, map(lambda x: x[1], d.items())))
-        
+
         convert_dict_typing(new_dict)
 
-        print(new_dict)
         return cls(**new_dict)
