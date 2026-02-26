@@ -1,11 +1,12 @@
 from enum import Enum
 
 
-class EyeTrackerEventEnum(Enum):
-    FIXATION = "fixation", 1
-    SACCADE = "saccade", 2
-    GLANCE = "glance", 3
+class EyeTrackerEventEnum(str, Enum):
+    FIXATION = "fixation"
+    SACCADE = "saccade"
+    GLANCE = "glance"
 
     @classmethod
-    def from_str(self, s) -> EyeTrackerEventEnum:
-        return self(s.strip().lower())
+    def from_string(cls, s: str) -> EyeTrackerEventEnum:
+        print("HERE")
+        return cls[s.strip().lower()]
