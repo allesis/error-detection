@@ -215,3 +215,4 @@ result-*
 .direnv
 test-data
 data
+wandb
