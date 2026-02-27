@@ -1,9 +1,12 @@
 import sys
+import numpy
 import type_enforced
 import read_in_data
 from pathlib import Path
 from util.mark_eye_tracker_events import mark_eye_tracker_events
 from util.process_marked_events import process_marked_events
+from util.denanify import denanify
+from training.kmeans import KMeans
 
 DATA_PATH: str = "data/train"
 
@@ -22,6 +25,14 @@ def main() -> None:
     )
 
     (train_data, target_data) = process_marked_events(marked_eye_tracker_events)
+
+    denanned_training_data = list(map(lambda l: denanify(l), train_data))
+
+    model: KMeans = KMeans()
+
+    prediction: list[float] = model.predict(denanned_training_data)
+    print(target_data)
+    print(prediction)
 
 
 if __name__ == "__main__":
