@@ -1,4 +1,6 @@
 import sys
+import traceback
+from sklearn.decomposition import PCA
 import numpy
 import type_enforced
 import read_in_data
@@ -6,7 +8,8 @@ from pathlib import Path
 from util.mark_eye_tracker_events import mark_eye_tracker_events
 from util.process_marked_events import process_marked_events
 from util.denanify import denanify
-from training.kmeans import KMeans
+from util.plot import plot_results
+from training.spectral_clustering import SpectralClustering
 
 DATA_PATH: str = "data/train"
 
@@ -28,16 +31,22 @@ def main() -> None:
 
     denanned_training_data = list(map(lambda l: denanify(l), train_data))
 
-    model: KMeans = KMeans()
+    pca = PCA(2)
 
-    prediction: list[float] = model.predict(denanned_training_data)
-    print(target_data)
-    print(prediction)
+    pca_data = pca.fit_transform(denanned_training_data)
+
+    model: SpectralClustering = SpectralClustering()
+
+    prediction: numpy.ndarray = model.predict(pca_data)
+
+    plot_results(pca_data,prediction)
+
+    
 
 
 if __name__ == "__main__":
     try:
         main()
-    except Exception as e:
-        print(f"Encountered an error:\n\t{e}")
+    except:
+        print(traceback.format_exc())
         exit(0)

@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "huggingface>=0.0.1",
+    "matplotlib>=3.10.8",
     "sci-kit>=0.1.0",
     "scikit-learn>=1.8.0",
     "type-enforced>=2.3.0",

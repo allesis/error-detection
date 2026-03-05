@@ -5,12 +5,16 @@ import numpy
 @type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
 class Model:
     @type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
-    def train(self, source: list[list[float]], target: list[float] = list()):
+    def train(
+            self, source: numpy.ndarray, target: numpy.ndarray = numpy.empty(0)
+            ):
         """Train the model to cluster data based on the clustering of source"""
         self._model.fit(source, y=target)
 
     @type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
-    def evaluate(self, source: list[float], target: list[float] = list()) -> float:
+    def evaluate(
+            self, source: numpy.ndarray, target: numpy.ndarray = numpy.empty(0)
+            ) -> float:
         """Evaluate the model's ability to cluster
         The model will train itself it is has not been prior to this method executing.
         Returns the accuracy as a float
@@ -20,7 +24,7 @@ class Model:
 
     @type_enforced.Enforcer(enabled=True, strict=True, clean_traceback=True)
     def predict(
-        self, source: list[list[float]], target: list[float] = list()
+        self, source: numpy.ndarray, target: numpy.ndarray = numpy.empty(0)
     ) -> list[float]:
         """Predicts the clustering of source, returning the predictions.
         The model will train itself it is has not been prior to this method executing.
