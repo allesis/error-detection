@@ -121,6 +121,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "huggingface" },
     { name = "matplotlib" },
+    { name = "numpy" },
     { name = "sci-kit" },
     { name = "scikit-learn" },
     { name = "type-enforced" },
@@ -131,6 +132,7 @@ dependencies = [
 requires-dist = [
     { name = "huggingface", specifier = ">=0.0.1" },
     { name = "matplotlib", specifier = ">=3.10.8" },
+    { name = "numpy", specifier = ">=2.4.2" },
     { name = "sci-kit", specifier = ">=0.1.0" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "type-enforced", specifier = ">=2.3.0" },
