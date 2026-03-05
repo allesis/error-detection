@@ -9,7 +9,7 @@ from util.mark_eye_tracker_events import mark_eye_tracker_events
 from util.process_marked_events import process_marked_events
 from util.denanify import denanify
 from util.plot import plot_results
-from training.spectral_clustering import SpectralClustering
+from sklearn.neighbors import KNeighborsClassifier
 
 DATA_PATH: str = "data/train"
 
@@ -29,19 +29,31 @@ def main() -> None:
 
     (train_data, target_data) = process_marked_events(marked_eye_tracker_events)
 
-    denanned_training_data = list(map(lambda l: denanify(l), train_data))
+    denanned_training_data = numpy.array(list(map(lambda l: denanify(l), train_data)))
+    numpified_target_data = numpy.array(list(map(lambda b: 1 if b else 0, target_data)))
 
-    pca = PCA(2)
+    test_eye_tracker_events = read_in_data.read_in_source_data(
+        Path(f"{DATA_PATH}/source/{sys.argv[2]}")
+    )
+    test_human_error_events = read_in_data.read_in_target_data(
+        Path(f"{DATA_PATH}/target/{sys.argv[2]}")
+    )
 
-    pca_data = pca.fit_transform(denanned_training_data)
+    test_marked_eye_tracker_events = mark_eye_tracker_events(
+        test_eye_tracker_events, test_human_error_events
+    )
+    (test_data, _) = process_marked_events(test_marked_eye_tracker_events)
+    denanned_test_data = numpy.array(list(map(lambda l: denanify(l), test_data)))
 
-    model: SpectralClustering = SpectralClustering()
+    model_classes = [KNeighborsClassifier]
 
-    prediction: numpy.ndarray = model.predict(pca_data)
+    for model_class in model_classes:
+        model = model_class()
 
-    plot_results(pca_data,prediction)
+        model.fit(denanned_training_data, numpified_target_data)
+        prediction: numpy.ndarray = model.predict(denanned_test_data)
 
-    
+        plot_results(denanned_test_data, prediction, name=f"test-plot.svg")
 
 
 if __name__ == "__main__":

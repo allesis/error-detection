@@ -20,10 +20,12 @@ def mark_eye_tracker_events(
         for error in errors:
             error_start_time = error.StartTime
             error_end_time = error.EndTime
-            if error_end_time < event_start_time or event_end_time < error_start_time:
-                # FIX: Bad reverse logic, we should have the opposite check
-                is_error = False
-            else:
+            if (
+                # With this we assume that error_start_time <= error_end_time
+                # and event_start_time <= event_end_time
+                error_start_time <= event_end_time  # error starts before event ends
+                and error_end_time >= event_start_time  # error ends before event starts
+            ):
                 is_error = True
 
         return (event, is_error)

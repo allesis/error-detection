@@ -8,5 +8,4 @@ class EyeTrackerEventEnum(str, Enum):
 
     @classmethod
     def from_string(cls, s: str) -> EyeTrackerEventEnum:
-        print("HERE")
         return cls[s.strip().lower()]
